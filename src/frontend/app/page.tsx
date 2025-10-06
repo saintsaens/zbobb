@@ -25,7 +25,6 @@ export default function LinksManager() {
 
   return (
     <main style={{ width: "100%", marginTop: "24px" }}>
-      bli
       {articles.map((article, articleIdx) => (
         <div key={articleIdx} style={{ marginBottom: "24px" }}>
           <h2 style={{ margin: "16px 0" }}>{article.title}</h2>
