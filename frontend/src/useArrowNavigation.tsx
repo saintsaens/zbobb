@@ -11,9 +11,7 @@ interface Article {
   items: {
     context: string;
     highlight: string;
-    link: string;
-    status: number;
-    openingBehavior: string;
+    href: string;
   }[];
 }
 
@@ -38,7 +36,7 @@ export default function useArrowNavigation(
       e.preventDefault();
       const item = urlItems[selectedIndex];
       setEditingIndex(selectedIndex);
-      setEditValue(articles[item.articleIndex].items[item.urlIndex].link);
+      setEditValue(articles[item.articleIndex].items[item.urlIndex].href);
     }
   };
 
@@ -46,7 +44,7 @@ export default function useArrowNavigation(
     if (e.key === "Enter" && editingIndex !== null) {
       const item = urlItems[editingIndex];
       const newArticles = [...articles];
-      newArticles[item.articleIndex].items[item.urlIndex].link = editValue;
+      newArticles[item.articleIndex].items[item.urlIndex].href = editValue;
       setArticles(newArticles);
       setEditingIndex(null);
     } else if (e.key === "Escape") {

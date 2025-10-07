@@ -1,9 +1,7 @@
 export interface ArticleItem {
   context: string;
   highlight: string;
-  link: string;
-  status: number;
-  openingBehavior: string;
+  href: string;
 }
 
 export interface Article {
@@ -18,23 +16,17 @@ export const articles: Article[] = [
       {
         context: "Platform admins can create skills, and link them to a user, a course or a path.",
         highlight: "user",
-        link: "https://support.360learning.com/hc/articles/115001166383",
-        status: 200,
-        openingBehavior: "Same tab",
+        href: "https://support.360learning.com/hc/articles/115001166383",
       },
       {
         context: "Platform admins can create skills, and link them to a user, a course or a path.",
         highlight: "course",
-        link: "https://support.360learning.com/hc/articles/115001356626",
-        status: 200,
-        openingBehavior: "Same tab",
+        href: "https://support.360learning.com/hc/articles/115001356626",
       },
       {
         context: "Platform admins can create skills, and link them to a user, a course or a path.",
         highlight: "path",
-        link: "https://support.360learning.com/hc/articles/360056138772",
-        status: 400,
-        openingBehavior: "Same tab",
+        href: "https://support.360learning.com/hc/articles/360056138772",
       },
     ],
   },
@@ -44,16 +36,12 @@ export const articles: Article[] = [
       {
         context: "Administrators and authors can delete and archive paths they can edit. ",
         highlight: "edit",
-        link: "https://example.com/delete/1",
-        status: 200,
-        openingBehavior: "Same tab",
+        href: "https://example.com/delete/1",
       },
       {
         context: "Deleting a path removes it from the learners' statistics page. ",
         highlight: "learners' statistics page",
-        link: "https://example.com/delete/2",
-        status: 200,
-        openingBehavior: "New tab",
+        href: "https://example.com/delete/2",
       },
     ],
   },
@@ -63,9 +51,7 @@ export const articles: Article[] = [
       {
         context: "If users do not receive any notification, learn more about helping learners who don't receive notifications →.",
         highlight: "learn more about helping learners who don't receive notifications →",
-        link: "https://example.com/add/1",
-        status: 400,
-        openingBehavior: "Same tab",
+        href: "https://example.com/add/1",
       },
     ],
   },
