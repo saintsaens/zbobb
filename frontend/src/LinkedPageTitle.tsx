@@ -18,7 +18,7 @@ export default function LinkedPageTitle({ url }: LinkedPageTitleProps) {
         }
 
         const articleId = match[1];
-        const res = await fetch(`http://localhost:3000/api/article/${articleId}`);
+        const res = await fetch(`http://localhost:3000/api/articles/${articleId}`);
 
         if (res.status === 404) {
           setPageTitle("404 Not Found");

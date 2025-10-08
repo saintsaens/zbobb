@@ -65,7 +65,14 @@ export default function ArticleSection({
               <RenderContext context={link.context} highlight={link.highlight} />
             </Typography>
           </Grid>
-          <Grid size={8}>
+          <Grid size={1}
+            style={{
+              textAlign: "center",
+            }}
+          >
+            →
+          </Grid>
+          <Grid size={7}>
             <Typography>{link.href}</Typography>
             <LinkedPageTitle url={link.href} />
           </Grid>

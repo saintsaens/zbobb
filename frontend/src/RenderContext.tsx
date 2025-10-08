@@ -15,8 +15,7 @@ export default function RenderContext({ context, highlight }: RenderContextProps
         style={{
           fontWeight: "bold",
           textDecoration: "underline",
-          backgroundColor: "yellow",
-          color: "black",
+          color: "blue",
           padding: "0 2px",
           borderRadius: "2px",
         }}
