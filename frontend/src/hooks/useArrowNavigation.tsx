@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import type { Article } from "./LinksManager";
+import type { Article } from "../components/LinksManager";
 
 export type SelectedPosition = {
   sectionIndex: number;

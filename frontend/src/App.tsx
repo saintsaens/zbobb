@@ -1,4 +1,4 @@
-import LinksManager from "./LinksManager"
+import LinksManager from "./components/LinksManager"
 
 function App() {
 

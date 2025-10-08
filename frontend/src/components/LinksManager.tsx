@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import ArticleSection from "./ArticleSection";
-import useArrowNavigation from "./useArrowNavigation";
-import type { SelectedPosition } from "./useArrowNavigation";
+import useArrowNavigation from "../hooks/useArrowNavigation";
+import type { SelectedPosition } from "../hooks/useArrowNavigation";
 import SearchBar from "./SearchBar";
 
 export type Article = {
