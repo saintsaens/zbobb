@@ -1,5 +1,3 @@
-import React from "react";
-
 interface RenderContextProps {
   context: string;
   highlight: string;

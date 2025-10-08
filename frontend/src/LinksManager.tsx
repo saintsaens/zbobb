@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo } from "react";
 import ArticleSection from "./ArticleSection";
 import useArrowNavigation from "./useArrowNavigation";
 import type { SelectedPosition } from "./useArrowNavigation";
+import SearchBar from "./SearchBar";
 
 export type Article = {
   id: number;
@@ -49,7 +50,9 @@ export default function LinksManager() {
           (link) =>
             link.href.toLowerCase().includes(term) ||
             link.highlight.toLowerCase().includes(term) ||
-            link.context.toLowerCase().includes(term)
+            link.context.toLowerCase().includes(term) ||
+            article.title.toLowerCase().includes(term) ||
+            article.url.toLowerCase().includes(term)
         );
         return filteredLinks.length > 0
           ? { ...article, links: filteredLinks }
@@ -70,21 +73,7 @@ export default function LinksManager() {
 
   return (
     <div>
-      <input
-        type="text"
-        placeholder="Search…"
-        value={searchTerm}
-        autoFocus
-        onChange={(e) => setSearchTerm(e.target.value)}
-        style={{
-          padding: "8px",
-          width: "100%",
-          marginBottom: "20px",
-          fontSize: "16px",
-          borderRadius: "4px",
-          border: "1px solid #ccc",
-        }}
-      />
+      <SearchBar value={searchTerm} onChange={setSearchTerm} />
 
       {filteredArticles.map((article, index) => (
         <ArticleSection
