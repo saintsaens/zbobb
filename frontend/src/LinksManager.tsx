@@ -1,17 +1,31 @@
 import { useEffect, useState } from "react";
 import ArticleSection from "./ArticleSection";
 
-type Article = {
+export type Article = {
   id: number;
   title: string;
   url: string;
   body: string;
+  links: {
+    href: string;
+    highlight: string;
+    context: string;
+  }[];
+};
+
+type SelectedPosition = {
+  sectionIndex: number;
+  linkIndex: number;
 };
 
 export default function LinksManager() {
   const [articles, setArticles] = useState<Article[]>([]);
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [selectedPos, setSelectedPos] = useState<SelectedPosition>({
+    sectionIndex: 0,
+    linkIndex: 0,
+  });
 
+  // Fetch articles with links
   useEffect(() => {
     const fetchLinks = async () => {
       try {
@@ -26,16 +40,35 @@ export default function LinksManager() {
     fetchLinks();
   }, []);
 
+  // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!articles.length) return;
 
-      if (e.key === "ArrowDown") {
-        setSelectedIndex((prev) =>
-          prev < articles.length - 1 ? prev + 1 : prev
-        );
-      } else if (e.key === "ArrowUp") {
-        setSelectedIndex((prev) => (prev > 0 ? prev - 1 : prev));
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+        e.preventDefault();
+
+        setSelectedPos((prev) => {
+          const section = articles[prev.sectionIndex];
+          const linkCount = section.links.length;
+
+          if (e.key === "ArrowDown") {
+            if (prev.linkIndex < linkCount - 1) {
+              return { ...prev, linkIndex: prev.linkIndex + 1 };
+            } else if (prev.sectionIndex < articles.length - 1) {
+              return { sectionIndex: prev.sectionIndex + 1, linkIndex: 0 };
+            }
+          } else if (e.key === "ArrowUp") {
+            if (prev.linkIndex > 0) {
+              return { ...prev, linkIndex: prev.linkIndex - 1 };
+            } else if (prev.sectionIndex > 0) {
+              const prevSection = articles[prev.sectionIndex - 1];
+              return { sectionIndex: prev.sectionIndex - 1, linkIndex: prevSection.links.length - 1 };
+            }
+          }
+
+          return prev;
+        });
       }
     };
 
@@ -50,8 +83,9 @@ export default function LinksManager() {
       {articles.map((article, index) => (
         <ArticleSection
           key={article.id}
-          id={article.id}
-          isSelected={index === selectedIndex}
+          {...article}
+          isSelected={selectedPos.sectionIndex === index}
+          selectedLinkIndex={selectedPos.sectionIndex === index ? selectedPos.linkIndex : -1}
         />
       ))}
     </>

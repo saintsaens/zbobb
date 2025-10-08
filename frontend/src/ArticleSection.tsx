@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import RenderContext from "./RenderContext";
+import { useRef, useEffect } from "react";
 import { Grid, Typography, Divider } from "@mui/material";
+import RenderContext from "./RenderContext";
 import LinkedPageTitle from "./LinkedPageTitle";
 
 type Hyperlink = {
@@ -9,53 +9,32 @@ type Hyperlink = {
   context: string;
 };
 
-type ArticleLinks = {
-  title: string;
-  links: Hyperlink[];
-};
-
 type ArticleSectionProps = {
   id: number;
+  title: string;
+  url: string;
+  body: string;
+  links: Hyperlink[];
   isSelected: boolean;
+  selectedLinkIndex: number;
 };
 
-export default function ArticleSection({ id, isSelected }: ArticleSectionProps) {
-  const [articleLinks, setArticleLinks] = useState<ArticleLinks | null>(null);
-  const [selectedLinkIndex, setSelectedLinkIndex] = useState(0);
+export default function ArticleSection({
+  title,
+  links,
+  isSelected,
+  selectedLinkIndex,
+}: ArticleSectionProps) {
+  const linkRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
-    const fetchLinks = async () => {
-      try {
-        const res = await fetch(`http://localhost:3000/api/articles/${id}/links`);
-        if (!res.ok) throw new Error("Failed to fetch links");
-        const data: ArticleLinks = await res.json();
-        setArticleLinks(data);
-      } catch (err) {
-        console.error("Error fetching links:", err);
+    if (isSelected && selectedLinkIndex >= 0) {
+      const el = linkRefs.current[selectedLinkIndex];
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "nearest" });
       }
-    };
-    fetchLinks();
-  }, [id]);
-
-  // Only handle keyboard when this section is active
-  useEffect(() => {
-    if (!isSelected || !articleLinks) return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "ArrowDown") {
-        setSelectedLinkIndex((prev) =>
-          prev < articleLinks.links.length - 1 ? prev + 1 : prev
-        );
-      } else if (e.key === "ArrowUp") {
-        setSelectedLinkIndex((prev) => (prev > 0 ? prev - 1 : prev));
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isSelected, articleLinks]);
-
-  if (!articleLinks) return null;
+    }
+  }, [isSelected, selectedLinkIndex]);
 
   return (
     <div
@@ -66,35 +45,32 @@ export default function ArticleSection({ id, isSelected }: ArticleSectionProps) 
       }}
     >
       <Typography variant="h5" gutterBottom>
-        {articleLinks.title}
+        {title}
       </Typography>
-        {articleLinks.links.map((item, index) => (
-          <Grid
-            container
-            spacing={1}
-            key={index}
-            style={{
-              backgroundColor:
-                isSelected && selectedLinkIndex === index
-                  ? "#e3f2fd"
-                  : "transparent",
-              transition: "background-color 0.1s ease",
-            }}
-          >
-            <Grid size={4}>
-              <Typography>
-                <RenderContext
-                  context={item.context ?? ""}
-                  highlight={item.highlight ?? ""}
-                />
-              </Typography>
-            </Grid>
-            <Grid size={8}>
-              <Typography>{item.href}</Typography>
-              <LinkedPageTitle url={item.href} />
-            </Grid>
+
+      {links.map((link, index) => (
+        <Grid
+          container
+          spacing={1}
+          key={index}
+          ref={(el) => { linkRefs.current[index] = el; }}
+          style={{
+            backgroundColor: isSelected && selectedLinkIndex === index ? "#e3f2fd" : "transparent",
+            transition: "background-color 0.1s ease",
+            padding: "5px",
+          }}
+        >
+          <Grid size={4}>
+            <Typography>
+              <RenderContext context={link.context} highlight={link.highlight} />
+            </Typography>
           </Grid>
-        ))}
+          <Grid size={8}>
+            <Typography>{link.href}</Typography>
+            <LinkedPageTitle url={link.href} />
+          </Grid>
+        </Grid>
+      ))}
       <Divider style={{ margin: "20px 0" }} />
     </div>
   );
