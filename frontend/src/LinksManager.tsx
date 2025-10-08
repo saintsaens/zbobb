@@ -72,7 +72,7 @@ export default function LinksManager() {
   if (!filteredArticles.length) return <p>Fetching articles…</p>;
 
   return (
-    <div>
+    <div style={{ padding: 5}}>
       <SearchBar value={searchTerm} onChange={setSearchTerm} />
 
       {filteredArticles.map((article, index) => (
