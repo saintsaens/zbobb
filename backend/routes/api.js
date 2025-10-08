@@ -16,6 +16,7 @@ const zendeskApi = axios.create({
     Authorization:
       "Basic " +
       Buffer.from(`${ZENDESK_EMAIL}/token:${ZENDESK_TOKEN}`).toString("base64"),
+    "Content-Type": "application/json",
   },
 });
 
@@ -98,6 +99,79 @@ router.get("/articles/:id", async (req, res) => {
     const status = err.response?.status || 500;
     const details = err.response?.data || err.message;
     res.status(status).json({ error: "Failed to fetch article", details });
+  }
+});
+
+// Update a link within an article's body
+router.put("/articles/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { currentHref, newHref, context, highlight } = req.body;
+
+    if (!currentHref || !newHref) {
+      return res
+        .status(400)
+        .json({ error: "Missing required fields: currentHref and newHref" });
+    }
+
+    // Step 1: Fetch current English translation
+    const { data } = await zendeskApi.get(
+      `/articles/${id}/translations/en-us.json`
+    );
+    const translation = data.translation;
+    let body = translation.body;
+
+    // Step 2: Parse the HTML and find the link to update
+    const dom = new JSDOM(body);
+    const document = dom.window.document;
+    const link = [...document.querySelectorAll("a")].find((a) => {
+      // Check href match first
+      if (a.href !== currentHref) return false;
+
+      // Check highlight (link text)
+      if (highlight && a.textContent.trim() !== highlight.trim()) return false;
+
+      // Check context (surrounding sentence/paragraph)
+      if (context) {
+        const parent = a.closest("p, li, div");
+        if (!parent) return false;
+        if (parent.textContent.trim() !== context.trim()) return false;
+      }
+
+      return true;
+    });
+
+    if (!link) {
+      return res
+        .status(404)
+        .json({ error: `No link found with href: ${currentHref}` });
+    }
+
+    // Step 3: Update the href
+    link.href = newHref;
+
+    const updatedBody = document.body.innerHTML;
+
+    // Step 4: Send updated translation back to Zendesk
+    const response = await zendeskApi.put(
+      `/articles/${id}/translations/en-us.json`,
+      {
+        translation: {
+          title: translation.title,
+          body: updatedBody,
+        },
+      }
+    );
+
+    res.json({
+      message: "Link updated successfully",
+      updatedHref: newHref,
+      translation: response.data.translation,
+    });
+  } catch (err) {
+    const status = err.response?.status || 500;
+    const details = err.response?.data || err.message;
+    res.status(status).json({ error: "Failed to update link", details });
   }
 });
 
